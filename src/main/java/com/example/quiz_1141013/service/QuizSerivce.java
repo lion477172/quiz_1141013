@@ -175,5 +175,4 @@ public class QuizSerivce {
 		}
 		return new GetQuestionRes(ResMessage.SUCCESS.getCode(), ResMessage.SUCCESS.getMessage(), questionVoList);
 	}
-
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.quiz_1141013.request.FillinReq;
 import com.example.quiz_1141013.request.QuizCreateReq;
 import com.example.quiz_1141013.request.QuizUpdateReq;
 import com.example.quiz_1141013.response.BasicRes;
@@ -26,23 +27,25 @@ public class QuizController {
 	@Autowired
 	private QuizSerivce quizSerivce;
 
-	/*新增問卷*/
+	/* 新增問卷 */
 	@PostMapping("quiz/create")
 	public BasicRes create(@Valid @RequestBody QuizCreateReq req) throws Exception {
 		return quizSerivce.create(req);
 	}
-	/*更新問卷*/
+
+	/* 更新問卷 */
 	@PostMapping("quiz/update")
-	public BasicRes update(@Valid  @RequestBody QuizUpdateReq req) throws Exception {
+	public BasicRes update(@Valid @RequestBody QuizUpdateReq req) throws Exception {
 		return quizSerivce.update(req);
 	}
-	/* 全部問卷*/
+
+	/* 全部問卷 */
 	@GetMapping("quiz/getAll")
 	public BasicRes getAll() {
 		return quizSerivce.getAll();
 	}
 
-	/* 搜尋問卷*/
+	/* 搜尋問卷 */
 	@GetMapping("quiz/get_fillter_data")
 	public GetListRes getAll(@RequestParam("keyword") String keyword, //
 			@RequestParam("startDate") LocalDate startDate, //
@@ -50,7 +53,7 @@ public class QuizController {
 		return quizSerivce.getAll(keyword, startDate, endDate);
 	}
 
-	/* quizId取問卷內容*/
+	/* quizId取問卷內容 */
 	@GetMapping("quiz/getQuestionByQuizId")
 	public GetQuestionRes getQuestionByQuizId( //
 			@RequestParam(value = "quiz_id", required = true) int quizId) throws Exception {
