@@ -6,6 +6,17 @@ public class Options {
 
 	private String optionName;
 
+	public Options() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public Options(int code, String optionName) {
+		super();
+		this.code = code;
+		this.optionName = optionName;
+	}
+
 	public int getCode() {
 		return code;
 	}

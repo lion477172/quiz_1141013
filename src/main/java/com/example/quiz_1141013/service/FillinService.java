@@ -43,6 +43,7 @@ public class FillinService {
 			return new BasicRes(ResMessage.QUESTION_NOTFUND.getCode(), //
 					ResMessage.QUESTION_NOTFUND.getMessage());
 		}
+
 		/* 把 answersList 轉成 Map<QuestionId, List<AnswerVo>> */
 		Map<Integer, List<AnswerVo>> quesIdAnsMap = new HashMap<>();
 		for (Answers item : req.getAnswersList()) {
@@ -71,13 +72,14 @@ public class FillinService {
 			} catch (Exception e) {
 				throw e;
 			}
-			/*寫進資料庫*/
-			for(int questionId : quesIdAnsMap.keySet()) {
-				try {
-					fillinDao.insert(req.getQuizId(), questionId, req.getEmail(), mapper.writeValueAsString(quesIdAnsMap.get(questionId)));
-				} catch (Exception e) {
-					throw e;
-				}
+		}
+		/* 寫進資料庫 */
+		for (int questionId : quesIdAnsMap.keySet()) {
+			try {
+				fillinDao.insert(req.getQuizId(), questionId, req.getEmail(),
+						mapper.writeValueAsString(quesIdAnsMap.get(questionId)));
+			} catch (Exception e) {
+				throw e;
 			}
 		}
 		return new BasicRes(ResMessage.SUCCESS.getCode(), ResMessage.SUCCESS.getMessage());
@@ -89,7 +91,7 @@ public class FillinService {
 		}
 		/* 比對選項編號一樣時，選項是否一樣 */
 		for (Options op : opList) {
-			if (ans.getCode() == op.getCode() && ans.getOptionName().equals(op.getOptionName())) {
+			if (ans.getCode() == op.getCode() && !ans.getOptionName().equals(op.getOptionName())) {
 				return false;
 			}
 		}

@@ -16,7 +16,6 @@ public class Answers {
 
 	public Answers() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public Answers( int questionId, List<AnswerVo> answerVoList) {

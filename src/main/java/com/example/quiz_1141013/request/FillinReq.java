@@ -8,14 +8,17 @@ import com.example.quiz_1141013.vo.Answers;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 public class FillinReq {
 
 	@NotBlank(message = ValidMsg.USER_NAME_IS_EMPTY)
 	private String name;
-
+	
+	@Pattern(regexp = "^09\\d{8}$")
 	private String phone;
 
+	@Pattern(regexp ="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
 	@NotBlank(message = ValidMsg.USER_EMAIL_IS_EMPTY)
 	private String email;
 

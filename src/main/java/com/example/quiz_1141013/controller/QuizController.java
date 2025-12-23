@@ -59,5 +59,6 @@ public class QuizController {
 			@RequestParam(value = "quiz_id", required = true) int quizId) throws Exception {
 		return quizSerivce.getQuestionByQuizId(quizId);
 	}
+	
 
 }

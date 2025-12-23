@@ -2,9 +2,9 @@ package com.example.quiz_1141013.constants;
 
 public enum Type {
 
-	SINGLE("single"), //
-	MULTI("multi"), //
-	TEXT("text");
+	SINGLE("SINGLE"), //
+	MULTI("MULTI"), //
+	TEXT("TEXT");
 
 	private String type;
 
