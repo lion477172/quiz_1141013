@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,4 +35,13 @@ public interface QuizDao extends JpaRepository<Quiz, Integer> {
 	@Query(value = "select * from quiz where title like %?1% and start_date >= ?2 and end_date < ?3", nativeQuery = true)
 	public List<Quiz> getAll(String keyword, LocalDate startDate, LocalDate endDate);
 
+	@Modifying
+	@Transactional
+	@Query(value = "delete from question where quiz_id = :quizId", nativeQuery = true)
+	int getQuidIdDelQuestions1(@Param("quizId") int quizId); 
+
+	@Modifying
+	@Transactional
+	@Query(value = "delete from quiz where id = :id", nativeQuery = true)
+	int getQuidIdDelQuestions2(@Param("id") int quizId);
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.quiz_1141013.constants.ResMessage;
 import com.example.quiz_1141013.constants.Type;
@@ -22,6 +23,8 @@ import com.example.quiz_1141013.vo.Answers;
 import com.example.quiz_1141013.vo.Options;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.validation.Valid;
 
 @Service
 public class FillinService {
@@ -97,4 +100,5 @@ public class FillinService {
 		}
 		return true;
 	};
+
 }

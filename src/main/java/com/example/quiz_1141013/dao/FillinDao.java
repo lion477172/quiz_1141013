@@ -21,4 +21,10 @@ public interface FillinDao extends JpaRepository<Fillin, FillinId> {
 
 	@Query(value= "select * from fillin where quiz_id = ?", nativeQuery = true)
 	public List<Fillin> getByQuizId(int quizId);
+	
+//	從 fillin 資料表中篩選出對應quiz_id表單中，所有『非簡答題』類型的題目資料
+@Query(value = "select * from fillin where quiz_id = ?1 and question_id "
+			+ " in (select question_id from question where quiz_id = ?1 and type != 'short-answer')", // 根據自己的 constants裡面 Type.java 的簡答題 type 去修改，照理說會是text
+			nativeQuery = true)
+	public List<Fillin> getByQuizIdWithoutText(int quizId);
 }

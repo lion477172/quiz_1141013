@@ -175,4 +175,23 @@ public class QuizSerivce {
 		}
 		return new GetQuestionRes(ResMessage.SUCCESS.getCode(), ResMessage.SUCCESS.getMessage(), questionVoList);
 	}
+	@Transactional(rollbackFor = Exception.class)
+	public BasicRes getQuidIdDelQuestions1(int quizId)  {
+		try {
+	        // 刪除題目 (子表)
+	        quizDao.getQuidIdDelQuestions1(quizId);
+	        
+	        // 刪除問卷 (主表)
+	        int result = quizDao.getQuidIdDelQuestions2(quizId);
+	        
+	        if (result > 0) {
+	            return new BasicRes(ResMessage.SUCCESS.getCode(), ResMessage.SUCCESS.getMessage());
+	        } else {
+	            // 如果主表沒被刪除（可能是 ID 不存在），回傳找不到
+	            return new BasicRes(ResMessage.NOT_FOUND.getCode(), "找不到該問卷 ID，刪除失敗");
+	        }
+	    } catch (Exception e) {
+	       throw e; 
+	    }
+}
 }

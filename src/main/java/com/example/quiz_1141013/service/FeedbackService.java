@@ -99,7 +99,6 @@ public class FeedbackService {
 		List<Fillin> res = fillinDao.getByQuizId(quizId);
 		/* Map<questionId,Map<code-optionName, count>> */
 		Map<Integer, Map<String, Integer>> map = new HashMap<>();
-		/* 每個選項的次數尚未整理，只是先將相同問題編號的資料加到 List*/
 		for (Fillin item : res) {
 			try {
 				/*
@@ -150,39 +149,64 @@ public class FeedbackService {
 		return new StatisticsRes(ResMessage.SUCCESS.getCode(), //
 				ResMessage.SUCCESS.getMessage(), list);
 	}
-	
 
 	public StatisticsRes statistics_test(int quizId) throws Exception {
-		/* res 包含了多位使用者(email)的填答 */
-		List<Fillin> res = fillinDao.getByQuizId(quizId);
-		/* Map<questionId, List<OptionsCount>> */
-		Map<Integer, List<OptionsCount>> map = new HashMap();
-		for (Fillin item : res) {
-			try {
-				/*
-				 * 把 answer 轉換成物件 List<AnswrVo> 這邊一個 List<AnswerVo> 只包含了一個問題的 所有編號跟選項
-				 */
-				List<AnswerVo> voList = mapper.readValue(item.getAnswer(), new TypeReference<>() {
-				});
-				/* voList 轉成 List<OptionsCount> */
-				List<OptionsCount> opCountList = CollectionUtils.isEmpty(map.get(item.getQuestionId()))
-						? new ArrayList<>()
-						: map.get(item.getQuestionId());
-				/*
-				 * voList.forEach 遍歷後，opCountList 裡面會是同一個 questionId 下，所有的 code-optionName
-				 * 以及是否有選(0:沒選；1:有選) 的結果。 就是 1.紅茶 count=0, 2.綠茶 count=1, 3.烏龍茶 count=0,
-				 * 4.奶茶count=0 這4筆 OptionsCount 資料， 所以當有第2位填答者的答案時， opCountList
-				 * 的資料就會是第一位填答著的4筆再加上新的4筆總共8筆資料
-				 */
-				voList.forEach(vo -> {
-					OptionsCount opCount = new OptionsCount(vo.getCode(), vo.getOptionName(), vo.isCheck() ? 1 : 0);
-					opCountList.add(opCount);
-				});
-				map.put(item.getQuestionId(), opCountList);
-			} catch (Exception e) {
-				throw e;
-			}
-		}
-		return null;
+	    /* res 包含了多位使用者(email)的填答 */
+	    List<Fillin> res = fillinDao.getByQuizId(quizId);
+	    
+	    /* Map<questionId, List<OptionsCount>> */
+	    Map<Integer, List<OptionsCount>> map = new HashMap<>();
+
+	    for (Fillin item : res) {
+	        try {
+	            /* 把字串 answer 轉換成物件 List<AnswerVo> */
+	            List<AnswerVo> voList = mapper.readValue(item.getAnswer(), new TypeReference<List<AnswerVo>>() {});
+
+	            /* 取得目前該問題已統計的 List，若無則 new 一個新的 */
+	            List<OptionsCount> opCountList = map.get(item.getQuestionId());
+	            if (opCountList == null) {
+	                opCountList = new ArrayList<>();
+	            }
+
+	            /* 遍歷使用者的回答 */
+	            for (AnswerVo vo : voList) {
+	                /* 有選才統計 */
+	                if (vo.isCheck()) {
+	                    boolean isExist = false; // 標記該選項是否已存在於統計清單中
+
+	                    /* 遍歷目前的統計清單，找找看有沒有這個選項代碼 */
+	                    for (OptionsCount op : opCountList) {
+	                        if (op.getCode() == vo.getCode()) {
+	                            // 【Bug A 修復】: 這裡是累加次數，不是修改編號，改成 setCount
+	                            op.setCount(op.getCount() + 1);
+	                            isExist = true;
+	                            break; // 找到就不用繼續找了
+	                        }
+	                    }
+
+	                    /* 【Bug B 修復】: 如果跑完一輪都沒找到 (isExist 為 false)，代表這是新選項，要加入 */
+	                    if (!isExist) {
+	                        // 假設第一次出現，次數為 1
+	                        opCountList.add(new OptionsCount(vo.getCode(), vo.getOptionName(), 1));
+	                    }
+	                }
+	            }
+
+	            /* 更新 Map */
+	            map.put(item.getQuestionId(), opCountList);
+
+	        } catch (Exception e) {
+	            throw e;
+	        }
+	    }
+
+	    /* 把 map 轉成 List<Statistics> 回傳 */
+	    List<Statistics> list = new ArrayList<>();
+	    map.forEach((k, v) -> {
+	        list.add(new Statistics(k, v));
+	    });
+
+	    return new StatisticsRes(ResMessage.SUCCESS.getCode(), ResMessage.SUCCESS.getMessage(), list);
 	}
+
 }
